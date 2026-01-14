@@ -16,7 +16,7 @@ fi
 cd /home/ubuntu
 
 # Clean previous deployment
-sudo rm -rf test-node 2>/dev/null
+sudo rm -rf testerika-backend 2>/dev/null
 pm2 delete all 2>/dev/null
 
 # Setup database (FRESH - DELETES DATA)
@@ -31,7 +31,7 @@ EOF
 
 # Clone your updated repository
 git clone https://github.com/hrtesterika-oss/testerika-backend.git
-cd test-node
+cd testerika-backend
 
 # Create environment files for each service
 for service in user common quiz question packages wallet; do

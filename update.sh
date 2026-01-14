@@ -4,12 +4,12 @@
 echo "🔄 Updating Testerika services..."
 
 # Check if directory exists
-if [ ! -d "/home/ubuntu/test-node" ]; then
+if [ ! -d "/home/ubuntu/testerika-backend" ]; then
     echo "❌ Project directory not found. Run deploy.sh first."
     exit 1
 fi
 
-cd /home/ubuntu/test-node
+cd /home/ubuntu/testerika-backend
 
 # Handle local changes and pull latest code
 echo "📥 Pulling latest code..."
