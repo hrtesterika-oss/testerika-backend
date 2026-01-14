@@ -30,7 +30,7 @@ GRANT ALL PRIVILEGES ON DATABASE testerika_production TO testerika_prod_user;
 EOF
 
 # Clone your updated repository
-git clone https://github.com/satyam-kr-1438/test-node.git
+git clone https://github.com/hrtesterika-oss/testerika-backend.git
 cd test-node
 
 # Create environment files for each service
