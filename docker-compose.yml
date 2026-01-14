@@ -1,0 +1,158 @@
+version: '3.8'
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+  kafka:
+    container_name: kafka
+    image: wurstmeister/kafka
+    ports:
+      - 9092:9092
+    volumes:
+      - ./data/kafka:/var/run/docker.sock
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=KAFKA
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+  webserver:
+    image: nginx:mainline-alpine
+    container_name: webserver
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - web-root:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - dhparam:/etc/ssl/certs
+    depends_on:
+      - common
+      - user
+    networks:
+      - app-network
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      # - nginx
+      - webserver
+    command: certonly --webroot --webroot-path=/var/www/html --email rajdatacube@gmail.com --agree-tos --no-eff-email --staging -d quiz.testerika.com -v
+    #command: certonly --webroot --webroot-path=/var/www/html --email my@email.com --agree-tos --no-eff-email --force-renewal -d nodejs.devopslee.com  -d www.nodejs.devopslee.com
+  userdb:
+    container_name: userdb
+    image: postgres
+    ports:
+      - 5432
+    volumes:
+      - ./data/postgres:/var/lib/postgres/data
+    environment:
+      - POSTGRES_USER=testerika
+      - POSTGRES_PASSWORD=aXx9jvzcArv0g7tjuIMs
+      - POSTGRES_DB=user
+  commondb:
+    container_name: commondb
+    image: postgres
+    ports:
+      - 5432
+    volumes:
+      - ./data/postgres:/var/lib/postgres/data
+    environment:
+      - POSTGRES_USER=testerika
+      - POSTGRES_PASSWORD=aXx9jvzcArv0g7tjuIMs
+      - POSTGRES_DB=common
+  common:
+    container_name: common
+    build: ./common
+    ports:
+      # - 8081:8080
+      - "3000:3000"
+    volumes:
+      - ./common:/app
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      # - POSTGRES_URL=postgres://postgres:123456@staffdb:5433/staff
+      DB_USER: testerika
+      DB_PASSWORD: aXx9jvzcArv0g7tjuIMs
+      DB_HOST: testerika-production.cahldwhzztzg.ap-south-1.rds.amazonaws.com
+      DB_PORT: 5432
+      DB_DATABASE: common
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: topic1
+    networks:
+      - app-network
+    depends_on:
+      - commondb
+      - kafka
+      # - nginx
+  user:
+    build: ./user
+    ports:
+      # - 8082:8080
+      - "3004:3004"
+    volumes:
+      - ./user:/app
+    restart: unless-stopped
+    environment:
+      PORT: 3004
+      # - POSTGRES_URL=postgres://postgres:123456@roledb:5433/role
+      DB_USER: testerika
+      DB_PASSWORD: aXx9jvzcArv0g7tjuIMs
+      DB_HOST: testerika-production.cahldwhzztzg.ap-south-1.rds.amazonaws.com
+      DB_PORT: 5432
+      DB_DATABASE: user
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: topic1
+    networks:
+      - app-network
+    depends_on:
+      - userdb
+      - kafka
+      # - nginx
+  krakend_ce:
+    image: devopsfaith/krakend:2.0.5
+    volumes:
+      - ./krakend:/etc/krakend
+    ports:
+      - "1234:1234"
+      - "8080:8080"
+      - "8090:8090"
+    command: [ "run", "-d", "-c", "/etc/krakend/krakend.json" ]
+    depends_on:
+      - common
+      - user
+  # nginx:
+  #   restart: always
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - "./nginx-conf/nginx.conf:/etc/nginx/nginx.conf"
+  #   ports:
+  #     - "8080:80"
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ubuntu/testerika_microservices/views/
+      o: bind
+  dhparam:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ubuntu/testerika_microservices/dhparam/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge
