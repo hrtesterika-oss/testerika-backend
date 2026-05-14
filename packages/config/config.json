@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "datacube",
+    "database": "packages",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "aXx9jvzcArv0g7tjuIMs",
+    "database": "packages",
+    "host": "testerika-production.cahldwhzztzg.ap-south-1.rds.amazonaws.com",
+    "dialect": "postgres"
+  }
+}

@@ -1,0 +1,14 @@
+{
+    "name":  "conference-quiz-stub",
+    "version":  "1.0.0",
+    "description":  "Local stub for the conferenceQuiz microservice",
+    "main":  "index.js",
+    "scripts":  {
+                    "start":  "node index.js"
+                },
+    "dependencies":  {
+                         "cors":  "^2.8.5",
+                         "express":  "^4.21.2",
+                         "nodemon":  "^2.0.6"
+                     }
+}

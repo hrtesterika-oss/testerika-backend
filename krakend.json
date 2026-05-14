@@ -1,0 +1,72 @@
+{
+  "version": 3,
+  "name": "KrakenD - API Gateway",
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "host": ["http://localhost:8080"],
+  "endpoints": [
+    {
+      "endpoint": "/staff",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "host": [ "https://jsonplaceholder.typicode.com" ],
+          "url_pattern": "/todos/1"
+        }
+      ]
+    },
+    {
+      "endpoint": "/role",
+      "backend": [
+        {
+          "url_pattern": "/todos",
+          "host": ["https://jsonplaceholder.typicode.com"],
+          "is_collection": true,
+          "encoding": "json"
+        }
+      ]
+    },
+    {
+      "endpoint": "/rolePermission",
+      "backend": [
+        {
+          "url_pattern": "/rolePermission",
+          "host": ["http://localhost:3003"],
+          "is_collection": true,
+          "encoding": "json"
+        }
+      ]
+    },
+    {
+      "endpoint": "/permission",
+      "backend": [
+        {
+          "url_pattern": "/permission",
+          "host": ["http://localhost:3003"],
+          "is_collection": true,
+          "encoding": "json"
+        }
+      ]
+    }
+  ],
+  "extra_config": {
+    "github_com/devopsfaith/krakend-cors": {
+      "allow_methods": [
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+        "DELETE",
+        "CONNECT",
+        "OPTIONS",
+        "TRACE",
+        "PATCH"
+      ],
+      "allow_origins": ["*"],
+      "allow_headers": ["*"],
+      "expose_headers": ["Content-Length"],
+      "max_age": "12h"
+    }
+  },
+  "output_encoding": "json"
+}
