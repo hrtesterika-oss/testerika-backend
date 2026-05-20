@@ -14,6 +14,18 @@ module.exports=(sequelize,Sequelize)=>{
           quiz_id:{
             type:Sequelize.INTEGER,
           },
+          transaction_id:{
+            type:Sequelize.STRING,
+            allowNull:true
+          },
+          payment_status:{
+            type:Sequelize.STRING,
+            allowNull:true
+          },
+          amount_paid:{
+            type:Sequelize.DECIMAL,
+            allowNull:true
+          },
           createdAt:{
             type:Sequelize.DATE,
             allowNull:false

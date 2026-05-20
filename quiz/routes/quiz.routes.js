@@ -36,6 +36,7 @@ router.get("/getQuizDetailAccordingToSubjectAndOtherFilteredData/:quiz_id",quizC
 router.post("/submitQuizQuestionAnswer",checkUserAuthorizedOrNot, quizController.submittingUserAnswer)
 router.get("/getQuizResultWithQuizId/:quiz_id",checkUserAuthorizedOrNot,quizController.getQuizResultWithToQuizId)
 router.post("/userRegistration",checkUserAuthorizedOrNot,quizController.userRegistration)
+router.get("/getUserRegisteredQuizzes/:user_id",checkUserAuthorizedOrNot,quizController.getUserRegisteredQuizzes)
 router.get("/getAllRegisteredUserUsingQuizId/:id",checkUserAuthorizedOrNot,quizController.getAllRegisteredusers)
 router.get("/getQuizDetailForgettingQuestion/:key/:user_id", checkUserAuthorizedOrNot, quizController.findQuizDetail);
 
@@ -83,5 +84,9 @@ router.post("/getQuizReportStatus",quizController.getQuizReportStatus)
 router.put("/status/update/updateTimeTakenForQuiz",quizController.updateTimeForQuizzes)
 router.put("/status/reset/resetTimeTakenForQuiz",quizController.resetTimeForQuizzes)
 
+
+
+router.get("/getUserAttemptedQuizzes/:user_id", checkUserAuthorizedOrNot, quizController.getUserAttemptedQuizzes);
+router.get("/getQuizAttemptDetails/:result_analysis_id", checkUserAuthorizedOrNot, quizController.getQuizAttemptDetails);
 
 module.exports = router;

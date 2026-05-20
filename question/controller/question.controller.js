@@ -648,25 +648,31 @@ exports.checkAnswerIsCorrectOrNot=async (req,res)=>{
 exports.getAllQuestionDetailUsingQuestionBankId=async (req,res)=>{
   try{
      const {data}=req.body
+     const ids = Array.isArray(data)
+       ? data.filter((id) => id != null && id !== '')
+       : []
+     if (ids.length === 0) {
+       return res.status(200).json({ data: [] })
+     }
         const findQuestionBankWithQuestions=await QuestionBanks.findAll({
-          where:{id:data},
+          where:{id:ids},
           attributes:["id"],
           include:[
             {
               model:Questions,
-              required:true,
+              required:false,
               as:"questions",
               attributes:["id","question_bank_id"],
               include:[{
                 model:QuestionOptions,
-                required:true,
+                required:false,
                 as:"options",
                 attributes:["id","question_id","right_option"],
               }]
             },
             {
               model:QuestionMarks,
-              required:true,
+              required:false,
               as:"marks",
               attributes:["id","question_bank_id","marks","negative_marks"]
             }

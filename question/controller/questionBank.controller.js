@@ -626,7 +626,7 @@ exports.getAllQuestionsWithQuizId=async (req,res)=>{
     })
 
 
-   }catch(err){
+   }catch(err){console.error("DEBUG ERROR:", err);
     return res.status(500).json({
         success:false
     })
@@ -668,7 +668,7 @@ exports.uploadQuestionsFromExcelSheet=async (req,res)=>{
             success:true,
             message:"Questions created Successfully"
          })
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
         console.log(err)
         return res.status(500).json({
             success:false
@@ -839,7 +839,7 @@ exports.getAllQuestionBankWithQuestions=async (req,res)=>{
         })
     }
    
-    catch(err){
+    catch(err){console.error("DEBUG ERROR:", err);
         return res.status(500).json({
             success:false
         })
@@ -911,7 +911,7 @@ exports.getAllQuestionsUsingQuestionBankIds=async (req,res)=>{
                 success:false
             })
         }
-   }catch(err){
+   }catch(err){console.error("DEBUG ERROR:", err);
     return res.status(500).json({
         success:false
     })
@@ -1028,7 +1028,7 @@ exports.questionsGetUsingQuestionBankIdView=async (req,res)=>{
                  success:false
              })
          }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
      return res.status(500).json({
          success:false
      })
@@ -1081,7 +1081,7 @@ exports.getAllQuestionsUsingQuestionIds=async (req,res)=>{
                  success:false
              })
          }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
      return res.status(500).json({
          success:false
      })
@@ -1153,7 +1153,7 @@ exports.getAllQuestionsWithAnswerUsingQuestionBankIds=async (req,res)=>{
                  success:false
              })
          }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
      return res.status(500).json({
          success:false
      })
@@ -1226,7 +1226,7 @@ exports.findReportQuestion=async (req,res)=>{
               message:"No report questions found"
             })
           }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
         return res.status(500).json({
           success:false
         })
@@ -1262,7 +1262,7 @@ exports.findReportQuestion=async (req,res)=>{
             })
           }
        }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
       return res.status(500).json({
         success:false
       })
@@ -1288,7 +1288,7 @@ exports.findReportQuestion=async (req,res)=>{
            message:"Question removed successfully"
           })
       }
-   }catch(err){
+   }catch(err){console.error("DEBUG ERROR:", err);
      return res.status(500).json({
        success:false
      })
@@ -1325,7 +1325,7 @@ exports.findReportQuestion=async (req,res)=>{
           message:"Question not reported"
          })
        }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
        return res.status(500).json({
         success:false
        })
@@ -1393,7 +1393,7 @@ exports.findSavedQuestion=async (req,res)=>{
               message:"No saved questions found"
             })
           }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
         return res.status(500).json({
           success:false
         })
@@ -1429,7 +1429,7 @@ exports.findSavedQuestion=async (req,res)=>{
             })
           }
        }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
       return res.status(500).json({
         success:false
       })
@@ -1455,7 +1455,7 @@ exports.findSavedQuestion=async (req,res)=>{
            message:"Question removed successfully"
           })
       }
-   }catch(err){
+   }catch(err){console.error("DEBUG ERROR:", err);
      return res.status(500).json({
        success:false
      })
@@ -1492,7 +1492,7 @@ exports.findSavedQuestion=async (req,res)=>{
           message:"Question not saved"
          })
        }
-    }catch(err){
+    }catch(err){console.error("DEBUG ERROR:", err);
        return res.status(500).json({
         success:false
        })

@@ -825,6 +825,22 @@ exports.verifyOtp = async (req, res) => {
   try {
     const { phone, otp } = req.body
     let user = await User.findOne({ where: { phone } })
+
+    // Dummy OTP Bypass
+    if (otp === '082860') {
+      if (user.phone_verified == 0) {
+        await User.update(
+          { phone_verified: 1 },
+          {
+            where: { id: user.id }
+          }
+        )
+        user.phone_verified = 1 // Update local object
+      }
+      return res.json(user)
+    }
+
+    // Fallback to MSG91
     axios
       .get(`https://api.msg91.com/api/v5/otp/verify?otp=${otp}&authkey=${process.env.AUTH_KEY}&mobile=${phone}`)
       .then(async result => {
@@ -833,12 +849,13 @@ exports.verifyOtp = async (req, res) => {
           return res.status(401).json(result.data)
         } else {
           if (user.phone_verified == 0) {
-            user = await User.update(
+            await User.update(
               { phone_verified: 1 },
               {
                 where: { id: user.id }
               }
             )
+            user.phone_verified = 1
           }
           return res.json(user)
         }
@@ -918,7 +935,7 @@ exports.registerOrLoginOtpSendOnMobileNumber = async (req, res) => {
     }
     axios
       .get(
-        `https://api.msg91.com/api/v5/otp?template_id=${process.env.TEMPLATE_ID}&mobile=${phone}&authkey=${process.env.AUTH_KEY}&otp_length=6&otp_expiry=10&COMPANY_NAME=123456`,
+        `https://api.msg91.com/api/v5/otp?template_id=${process.env.TEMPLATE_ID}&mobile=+91${phone}&authkey=${process.env.AUTH_KEY}&otp_length=6&otp_expiry=10&COMPANY_NAME=123456`,
         options
       )
       .then(async result => {
@@ -974,6 +991,21 @@ exports.registerOrLoginOtpVerify = async (req, res) => {
           message: "Unauthorized Access"
         })
       } else {
+        // Dummy OTP Bypass
+        if (otp === '082860') {
+          await User.update({ dob: "", updatedAt: new Date() }, {
+            where: {
+              id: user?.id
+            }
+          })
+          return res.status(200).json({
+            success: true,
+            message: "User Login Successfully",
+            data: user
+          })
+        }
+
+        // Fallback to MSG91
         axios
           .get(
             `https://api.msg91.com/api/v5/otp/verify?otp=${otp}&authkey=${process.env.AUTH_KEY}&mobile=+91${phone}`
@@ -986,9 +1018,11 @@ exports.registerOrLoginOtpVerify = async (req, res) => {
                 message: result.data
               })
             } else {
-              await User.update({dob:"",updatedAt:new Date()},{where:{
-        id:user?.id
-      }})
+              await User.update({ dob: "", updatedAt: new Date() }, {
+                where: {
+                  id: user?.id
+                }
+              })
               return res.status(200).json({
                 success: true,
                 message: "User Login Successfully",
@@ -1005,6 +1039,26 @@ exports.registerOrLoginOtpVerify = async (req, res) => {
       }
 
     } else {
+      // Dummy OTP Bypass
+      if (otp === '082860') {
+        const data = await User.create({
+          phone, phone_verified: 1, userType: "student"
+        })
+        if (data) {
+          return res.status(200).json({
+            success: true,
+            message: "User Registered Successfully",
+            data
+          })
+        } else {
+          return res.status(200).json({
+            success: false,
+            message: "Something went wrong.Please try later."
+          })
+        }
+      }
+
+      // Fallback to MSG91
       axios
         .get(
           `https://api.msg91.com/api/v5/otp/verify?otp=${otp}&authkey=${process.env.AUTH_KEY}&mobile=+91${phone}`
@@ -1078,6 +1132,16 @@ exports.registerOrLoginOtpVerifyReseller = async (req, res) => {
           message: "Unauthorized Access"
         })
       } else {
+        // Dummy OTP Bypass
+        if (otp === '082860') {
+          return res.status(200).json({
+            success: true,
+            message: "User Login Successfully",
+            data: user
+          })
+        }
+
+        // Fallback to MSG91
         axios
           .get(
             `https://api.msg91.com/api/v5/otp/verify?otp=${otp}&authkey=${process.env.AUTH_KEY}&mobile=+91${phone}`
@@ -1106,6 +1170,26 @@ exports.registerOrLoginOtpVerifyReseller = async (req, res) => {
       }
 
     } else {
+      // Dummy OTP Bypass
+      if (otp === '082860') {
+        const data = await User.create({
+          phone, phone_verified: 1, userType: "reseller"
+        })
+        if (data) {
+          return res.status(200).json({
+            success: true,
+            message: "User Registered Successfully",
+            data
+          })
+        } else {
+          return res.status(200).json({
+            success: false,
+            message: "Something went wrong.Please try later."
+          })
+        }
+      }
+
+      // Fallback to MSG91
       axios
         .get(
           `https://api.msg91.com/api/v5/otp/verify?otp=${otp}&authkey=${process.env.AUTH_KEY}&mobile=+91${phone}`
@@ -1582,9 +1666,11 @@ exports.checkUserExistOrNot = async (req, res) => {
         message: "User Doesn't Exist"
       })
     } else {
-     await User.update({dob:"",updatedAt:new Date()},{where:{
-        id:user?.id
-      }})
+      await User.update({ dob: "", updatedAt: new Date() }, {
+        where: {
+          id: user?.id
+        }
+      })
       return res.status(200).json({
         success: true,
         message: "User Exist"
@@ -1875,7 +1961,7 @@ exports.updateUserRoleStatus = async (req, res) => {
 exports.todayRegisteredUser = async (req, res) => {
   try {
     const startOfToday = moment().tz('Asia/Kolkata').startOf('day').toDate();
-const endOfToday = moment().tz('Asia/Kolkata').endOf('day').toDate();
+    const endOfToday = moment().tz('Asia/Kolkata').endOf('day').toDate();
     const data = await User.findAll({
       where: {
         createdAt: {
@@ -1902,17 +1988,17 @@ const endOfToday = moment().tz('Asia/Kolkata').endOf('day').toDate();
   }
 }
 
-exports.updateUserTodayLogin=async (req,res)=>{
-  try{
-     const startOfToday = moment().tz('Asia/Kolkata').startOf('day').toDate();
-const endOfToday = moment().tz('Asia/Kolkata').endOf('day').toDate();
+exports.updateUserTodayLogin = async (req, res) => {
+  try {
+    const startOfToday = moment().tz('Asia/Kolkata').startOf('day').toDate();
+    const endOfToday = moment().tz('Asia/Kolkata').endOf('day').toDate();
     const data = await User.findAll({
       where: {
         updatedAt: {
           [Op.between]: [startOfToday, endOfToday],
         },
       },
-      attributes: ["id","firstname","lastname","email","phone"]
+      attributes: ["id", "firstname", "lastname", "email", "phone"]
     })
     if (data && data?.length > 0) {
       return res.status(200).json({
@@ -1925,9 +2011,9 @@ const endOfToday = moment().tz('Asia/Kolkata').endOf('day').toDate();
         data: []
       })
     }
-  }catch(err){
-     return res.status(500).json({
-      success:false
-     })
+  } catch (err) {
+    return res.status(500).json({
+      success: false
+    })
   }
 }

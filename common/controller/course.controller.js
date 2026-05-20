@@ -20,8 +20,8 @@ exports.getAll = async (req, res) => {
     try {
         let { page, items_per_page, search, filter_question_type, filter_level } = req.query
         let data;
-        page = parseInt(page)
-        items_per_page = parseInt(items_per_page)
+        page = parseInt(page) || 1
+        items_per_page = parseInt(items_per_page) || 10
         const offset = (page - 1) * items_per_page;
         const limit = items_per_page;
         if (search) {

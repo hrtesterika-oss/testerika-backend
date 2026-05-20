@@ -15,8 +15,8 @@ exports.findAll = async (req, res) => {
       filter_level
     } = req.query
     let data
-    page = parseInt(page)
-    items_per_page = parseInt(items_per_page)
+    page = parseInt(page) || 1
+    items_per_page = parseInt(items_per_page) || 10
     const offset = (page - 1) * items_per_page
     const limit = items_per_page
     // const include = [
